@@ -2,4 +2,4 @@ install-deps:
 	npm ci
 
 lint:
-	npx eslint .
+	npx eslint --fix .
