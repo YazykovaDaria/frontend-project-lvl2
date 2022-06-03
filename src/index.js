@@ -1,6 +1,8 @@
 import _ from 'lodash';
 import { readFileSync } from 'fs';
 import path from 'path';
+import getDifferents from './getDiff.js';
+import parser from './parser.js';
 
 const readFile = (fileName) => readFileSync(path.resolve(process.cwd(), fileName), 'utf-8');
 
@@ -30,9 +32,11 @@ const compareFiles = (file1, file2) => {
 const genDiff = (filepath1, filepath2) => {
   const contentFile1 = readFile(filepath1);
   const contentFile2 = readFile(filepath2);
+  const formatFiles = filepath1.slice(-4);
+  //const differents = parser(contentFile1, contentFile2);
   // console.log(contentFile1);
-  const compare = compareFiles(contentFile1, contentFile2);
-  return compare;
+  //const compare = compareFiles(contentFile1, contentFile2);
+  //return compare;
 };
 
 export default genDiff;
