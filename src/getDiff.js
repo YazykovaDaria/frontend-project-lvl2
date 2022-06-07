@@ -1,11 +1,18 @@
 const findDifferentsInObj = (object1, object2) => {
     const keys = Object.keys(object1);
-    const differentValue = keys.flatMap((key) => {
+    // const differentValue = keys.flatMap((key) => {
+    //     if (object2[key] !== object1[key]) {
+    //         return { [key]: object1[key] };
+    //     }
+    //     return [];
+    // });
+    const differentValue = keys.reduce((acc, key) => {
         if (object2[key] !== object1[key]) {
-            return { [key]: object1[key] };
+            acc[key] = object1[key];
+            return acc;
         }
-        return [];
-    });
+        return acc;
+    }, {});
     return differentValue;
 };
 
@@ -17,14 +24,12 @@ const differentInTwoObj = (differentsFirstObj, differentsSeconsObj) => {
     return differents;
 };
 
-export const getDifferentFirstFile = (different) => different.onlyInFirstObj;
-export const getDifferentSecondFile = (different) => different.onlyInSecondObj;
+export const getDifferentFirstObj = (different) => different.onlyInFirstObj;
+export const getDifferentSecondObj = (different) => different.onlyInSecondObj;
 
-const getDifferents = (file1, file2) => {
-    const obj1 = JSON.parse(file1);
-    const obj2 = JSON.parse(file2);
-    const differents = differentInTwoObj(findDifferentsInObj(obj1, obj2), findDifferentsInObj(obj2, obj1));
+export const getDifferents = (obj1, obj2) => {
+    const firstObjectDiff = findDifferentsInObj(obj1, obj2);
+    const secondObjectDiff = findDifferentsInObj(obj2, obj1);
+    const differents = differentInTwoObj(firstObjectDiff, secondObjectDiff);
     return differents;
 };
-
-export default getDifferents;
