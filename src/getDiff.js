@@ -8,28 +8,30 @@ const isObject = (value) => {
 };
 
 const getDifferents = (obj1, obj2) => {
-  //const check = (key) => obj2[key];
+  // const check = (key) => obj2[key];
 
   const allKeys = _.union(Object.keys(obj1).concat(Object.keys(obj2)));
-  const sort = _.sortBy(allKeys);
-  const res = sort.map((key) => {
+  const res = allKeys.reduce((acc, key) => {
     if (_.has(obj1, key) && !_.has(obj2, key)) {
-      return ['-', { [key]: obj1[key] }];
+      const diff = { first: { [key]: obj1[key] } };
+      return Object.assign(acc, diff);
     } if (!_.has(obj1, key) && _.has(obj2, key)) {
-      return ['+', { [key]: obj2[key] }];
+      const diff = { second: { [key]: obj2[key] } };
+      return Object.assign(acc, diff);
     } if (obj1[key] === obj2[key]) {
-      return ['*', { [key]: obj1[key] }];
+      const diff = { own: { [key]: obj1[key] } };
+      return Object.assign(acc, diff);
     } if (!isObject(obj1[key]) || !isObject(obj2[key])) {
-      return ['-', { [key]: obj1[key] }, '+', { [key]: obj2[key] }];
+      const diff = {
+        first: { [key]: obj1[key] },
+        second: { [key]: obj2[key] },
+      };
+      return _.merge(acc, diff);
     }
-    return ['*', [key], getDifferents(obj1[key], obj2[key])];
-
-    // if (_.has(obj1, key) && _.has(obj2, key)) {
-    //   if (obj1[key] === obj2[key]) {
-    //     return [{ [key]: obj1[key] }, '*'];
-    //   }
-    // }
-  });
+    const diff = { [key]: getDifferents(obj1[key], obj2[key]) };
+    return _.merge(acc, diff);
+  }, { first: {}, second: {}, own: {} });
+  //console.log(res);
   return res;
 };
 
@@ -54,7 +56,7 @@ const o2 = {
     },
   },
 };
-console.log(JSON.stringify(getDifferents(o1, o2)));
+console.log(getDifferents(o1, o2));
 
 // const findDifferentsInObj = (object1, object2) => {
 //   const keys = Object.keys(object1);
