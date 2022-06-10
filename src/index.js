@@ -35,10 +35,10 @@ const genDiff = (filepath1, filepath2) => {
   const fileExtension = filepath1.slice(-4);
   const result = render(fileExtension, contentFile1, contentFile2);
   return result;
-  //const differents = parser(contentFile1, contentFile2);
+  // const differents = parser(contentFile1, contentFile2);
   // console.log(contentFile1);
-  //const compare = compareFiles(contentFile1, contentFile2);
-  //return compare;
+  // const compare = compareFiles(contentFile1, contentFile2);
+  // return compare;
 };
 
 export default genDiff;

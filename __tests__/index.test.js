@@ -14,9 +14,9 @@ const testFileNames = ['test1File1.json', 'test1File2.json'];
 const testCorrectAnswerFileName = ['test1Answer'];
 
 test('gendiff', () => {
-    const file1 = pathToTestFile(testFileNames[0]);
-    const file2 = pathToTestFile(testFileNames[1]);
-    const correctAnswer = readFileSync(pathToTestFile(testCorrectAnswerFileName[0]), 'utf-8');
+  const file1 = pathToTestFile(testFileNames[0]);
+  const file2 = pathToTestFile(testFileNames[1]);
+  const correctAnswer = readFileSync(pathToTestFile(testCorrectAnswerFileName[0]), 'utf-8');
 
-    expect(genDiff(file1, file2)).toEqual(correctAnswer);
+  expect(genDiff(file1, file2)).toEqual(correctAnswer);
 });
