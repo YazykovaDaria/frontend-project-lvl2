@@ -6,8 +6,10 @@ import yaml from 'js-yaml';
 const parser = (format, file) => {
   if (format === 'json') {
     return JSON.parse(file);
+  } if (format === 'yaml' || format === '.yml') {
+    return yaml.load(file);
   }
-  return yaml.load(file);
+  throw new Error('incorrect file extension');
 };
 
 export default parser;
