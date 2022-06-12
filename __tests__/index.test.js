@@ -18,5 +18,5 @@ test('gendiff', () => {
   const file2 = pathToTestFile(testFileNames[1]);
   const correctAnswer = readFileSync(pathToTestFile(testCorrectAnswerFileName[0]), 'utf-8');
 
-  expect(genDiff(file1, file2)).toEqual(correctAnswer);
+  expect(genDiff(file1, file2)).toBe(correctAnswer);
 });

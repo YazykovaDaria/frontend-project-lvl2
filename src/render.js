@@ -1,54 +1,60 @@
-import _ from 'lodash';
-import parser from './parser.js';
-import { getDifferents, getDifferentFirstObj, getDifferentSecondObj } from './getDiff.js';
+import { isObject } from './getDiff.js';
 
-const indicators = ['  - ', '  + ', '    '];
-
-const render = (extension, contentFile1, contentFile2) => {
-  const obj1 = parser(extension, contentFile1);
-  const obj2 = parser(extension, contentFile2);
-  const differents = getDifferents(obj1, obj2);
-  const obj1Diff = getDifferentFirstObj(differents);
-  const obj2Diff = getDifferentSecondObj(differents);
-  const obj1Entries = Object.entries(obj1);
-  const obj2Entries = Object.entries(obj2);
-  const allEntries = obj1Entries.concat(obj2Entries);
-
-  // const unigEntries = (entries) => {
-  //     const set = new Set(entries.map(JSON.stringify));
-  //     const uniqArray = Array.from(set).map(JSON.parse);
-  //     return uniqArray;
-  // };
-
-  // const sort = _.sortBy(unigEntries(allEntries));
-  const sort = _.sortBy(allEntries);
-  const result = sort.reduce((acc, [key, value], _, arr) => {
-    // const [key, value] = keyValue;
-    if (obj1Diff[key] === value) {
-      // const resultString = `${indicators[0]}${key}: ${value}\r\n`;
-      acc += `\r\n${indicators[0]}${key}: ${value}`;
-      return acc;
-    } if (obj2Diff[key] === value) {
-      // const resultString = `${indicators[1]}${key}: ${value}\r\n`
-      acc += `\r\n${indicators[1]}${key}: ${value}`;
-      return acc;
-    }
-    acc += `\r\n${indicators[2]}${key}: ${value}`;
-    return acc;
-    // console.log('y');
-  }, '{');
-  const y = `{\r\n${result}}`;
-  // const n = [...obj1, ...obj2];
-  console.log(y);
-  return `${result}\r\n}`;
+const getIndicator = (indicator) => {
+  switch (indicator) {
+    case '-*':
+      return '- ';
+    case '+*':
+      return '+ ';
+    case '=*':
+      return '  ';
+    default:
+      throw new Error('incorrect indicator');
+  }
 };
 
+const render = (object) => {
+  const item = (obj, depth) => {
+    const replacer = ' ';
+    const spacesCount = 2;
+    const indentSize = depth * spacesCount;
+    const currentIndent = replacer.repeat(indentSize);
+    const bracketIndent = replacer.repeat(indentSize - spacesCount);
+
+    const keys = Object.keys(obj);
+    const res = keys.flatMap((key) => {
+      const indicator = key.slice(0, 2);
+      console.log(key)
+      const clearKey = key.slice(2);
+
+      if (Array.isArray(obj[key])) {
+        const str1 = `${currentIndent}${getIndicator('-*')}${clearKey}: ${obj[key][0]}`;
+        const str2 = `${currentIndent}${getIndicator('+*')}${clearKey}: ${obj[key][1]}`;
+        return [str1, str2];
+      } if (isObject(obj[key])) {
+        const children = item(obj[key], depth + 1);
+        return `${currentIndent}${getIndicator(indicator)}${clearKey}: ${children}`;
+      }
+      return `${currentIndent}${getIndicator(indicator)}${clearKey}: ${obj[key]}`;
+    });
+    return ['{', ...res, `${bracketIndent}}`].join('\n');
+  };
+  const f = item(object, 1);
+  console.log(f);
+  return f;
+};
+
+// const n = {
+//   '+*key': 'gj',
+//   '-*key1': 'gj',
+//   '-+key2': [3, 2],
+//   '=*key3': {
+//     '=*nextK1': 2,
+//     '=*nextK2': {
+//       '-+has': [3, 2],
+//     },
+//   },
+// };
+
+// console.log(render(n));
 export default render;
-// const a = [['bey', 1], ['de', 'hf'], ['a', 4], ['a', 4]];
-// const b = [['a', 4], ['c', 11]];
-// console.log(_.union(a, b));
-// console.log(_.uniqBy(col));
-// const h = 'a';
-// const y = 'n';
-// const n = { a: 7, c: 'n' };
-// console.log(_.has(n, y));
