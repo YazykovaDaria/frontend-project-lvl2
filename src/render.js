@@ -1,60 +1,78 @@
-import { isObject } from './getDiff.js';
+import { isObject, getDifferents } from './getDiff.js';
 
 const getIndicator = (indicator) => {
   switch (indicator) {
-    case '-*':
+    case 'onlyFirst':
       return '- ';
-    case '+*':
+    case 'onlySecond':
       return '+ ';
-    case '=*':
+    case ('notDiff' || undefined):
       return '  ';
     default:
-      throw new Error('incorrect indicator');
+      return '*';
+    //throw new Error('incorrect indicator');
   }
 };
 
-const render = (object) => {
-  const item = (obj, depth) => {
-    const replacer = ' ';
-    const spacesCount = 2;
-    const indentSize = depth * spacesCount;
-    const currentIndent = replacer.repeat(indentSize);
-    const bracketIndent = replacer.repeat(indentSize - spacesCount);
+const render = (collection) => {
+  const item = (value, depth) => {
 
-    const keys = Object.keys(obj);
-    const res = keys.flatMap((key) => {
-      const indicator = key.slice(0, 2);
-      console.log(key)
-      const clearKey = key.slice(2);
+    const result = value.flatMap((obj) => {
+      const replacer = ' ';
+      const spacesCount = 2;
+      const indentSize = depth * spacesCount;
+      const currentIndent = replacer.repeat(indentSize);
+      const bracketIndent = replacer.repeat(indentSize - spacesCount);
 
-      if (Array.isArray(obj[key])) {
-        const str1 = `${currentIndent}${getIndicator('-*')}${clearKey}: ${obj[key][0]}`;
-        const str2 = `${currentIndent}${getIndicator('+*')}${clearKey}: ${obj[key][1]}`;
-        return [str1, str2];
-      } if (isObject(obj[key])) {
-        const children = item(obj[key], depth + 1);
-        return `${currentIndent}${getIndicator(indicator)}${clearKey}: ${children}`;
-      }
-      return `${currentIndent}${getIndicator(indicator)}${clearKey}: ${obj[key]}`;
+      const keys = Object.entries(obj)
+        .flatMap(([key, val]) => {
+          const { indicator } = key;
+          const keyStr = `${currentIndent}${getIndicator(indicator)}${[key]}`;
+          if (!isObject(val)) {
+            return `${keyStr}: ${val}`;
+          }
+          // разобраться с формированием строк (просмотреть какие кл-зн получаю) и индикаторами!
+          return `${keyStr}: ${item(val, depth + 1)}`;
+        });
+      const y = ['{', ...keys, `${bracketIndent}}`].join('\n');
+      //console.log(y);
+      return y;
     });
-    return ['{', ...res, `${bracketIndent}}`].join('\n');
+    return result;
   };
-  const f = item(object, 1);
+  const f = item(collection, 1);
   console.log(f);
   return f;
 };
 
-// const n = {
-//   '+*key': 'gj',
-//   '-*key1': 'gj',
-//   '-+key2': [3, 2],
-//   '=*key3': {
-//     '=*nextK1': 2,
-//     '=*nextK2': {
-//       '-+has': [3, 2],
-//     },
-//   },
-// };
+const o1 = {
+  key1: 'gj',
+  key2: 3,
+  key3: {
+    nextK1: 2,
+    nextK2: {
+      has: {
+        keg: 1,
+        h: 2,
+      },
+    },
+  },
+};
 
-// console.log(render(n));
+const o2 = {
+  key: 'gj',
+  key2: 2,
+  key3: {
+    nextK1: 2,
+    nextK3: {
+      has: {
+        keg: 'he',
+      },
+    },
+  },
+};
+// console.log(getDifferents(o1, o2));
+const h = getDifferents(o1, o2);
+//console.log(render(h));
+render(h);
 export default render;

@@ -10,31 +10,19 @@ export const isObject = (value) => {
 export const getDifferents = (obj1, obj2) => {
   const allKeys = _.union(Object.keys(obj1).concat(Object.keys(obj2)));
   const sortKeys = allKeys.sort();
-  const differents = sortKeys.reduce((acc, key) => {
+
+  const differents = sortKeys.flatMap((key) => {
     if (_.has(obj1, key) && !_.has(obj2, key)) {
-      const keyIndicator = `-*${[key]}`;
-      const diff = { [keyIndicator]: obj1[key] };
-      return Object.assign(acc, diff);
+      return { [key]: obj1[key], indicator: 'onlyFirst' };
     } if (!_.has(obj1, key) && _.has(obj2, key)) {
-      const keyIndicator = `+*${[key]}`;
-      const diff = { [keyIndicator]: obj2[key] };
-      return Object.assign(acc, diff);
+      return { [key]: obj2[key], indicator: 'onlySecond' };
     } if (obj1[key] === obj2[key]) {
-      const keyIndicator = `=*${[key]}`;
-      const diff = { [keyIndicator]: obj1[key] };
-      return Object.assign(acc, diff);
+      return { [key]: obj1[key], indicator: 'notDiff' };
     } if (isObject(obj1[key]) && isObject(obj2[key])) {
-      const keyIndicator = `=*${[key]}`;
-      const diff = { [keyIndicator]: getDifferents(obj1[key], obj2[key]) };
-      return Object.assign(acc, diff);
+      return { [key]: getDifferents(obj1[key], obj2[key]), indicator: 'notDiff' };
     }
-    const keyIndicator = `-+${[key]}`;
-    const diff = {
-      [keyIndicator]: [obj1[key], obj2[key]],
-    };
-    // console.log(diff);
-    return Object.assign(acc, diff);
-  }, {});
+    return [{ [key]: obj1[key], indicator: 'onlyFirst' }, { [key]: obj2[key], indicator: 'onlySecond' }];
+  });
   return differents;
 };
 // key: { не ставится индикатор на такой вариант
@@ -47,7 +35,10 @@ export const getDifferents = (obj1, obj2) => {
 //   key3: {
 //     nextK1: 2,
 //     nextK2: {
-//       has: 'hey',
+//       has: {
+//         keg: 1,
+//         h: 2,
+//       },
 //     },
 //   },
 // };
@@ -57,10 +48,14 @@ export const getDifferents = (obj1, obj2) => {
 //   key2: 2,
 //   key3: {
 //     nextK1: 2,
-//     nextK2: {
-//       has: 'he',
+//     nextK3: {
+//       has: {
+//         keg: 'he',
+//       },
 //     },
 //   },
 // };
-//console.log(getDifferents(o1, o2));
+// console.log(getDifferents(o1, o2));
 // getDifferents(o1, o2);
+// const m = _.merge(o1, o2);
+// console.log(_.sortBy(m));
