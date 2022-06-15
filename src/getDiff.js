@@ -7,24 +7,44 @@ export const isObject = (value) => {
   return false;
 };
 
+const buildDiff = (key, value, marker = 'none') => {
+  if (!isObject(value)) {
+    return { [key]: value, indicator: marker };
+  }
+  const result = Object.keys(value)
+    .map((currentKey) => (buildDiff(currentKey, value[currentKey])));
+  //что с индикатором?
+  const n = { [key]: result, indicator: marker };
+  return n;
+};
+
 export const getDifferents = (obj1, obj2) => {
   const allKeys = _.union(Object.keys(obj1).concat(Object.keys(obj2)));
   const sortKeys = allKeys.sort();
 
   const differents = sortKeys.flatMap((key) => {
     if (_.has(obj1, key) && !_.has(obj2, key)) {
-      return { [key]: obj1[key], indicator: 'onlyFirst' };
+      return buildDiff(key, obj1[key], 'onlyFirst');
+      // { [key]: obj1[key], indicator: 'onlyFirst' };
     } if (!_.has(obj1, key) && _.has(obj2, key)) {
-      return { [key]: obj2[key], indicator: 'onlySecond' };
+      return buildDiff(key, obj2[key], 'onlySecond');
+      // { [key]: obj2[key], indicator: 'onlySecond' };
     } if (obj1[key] === obj2[key]) {
-      return { [key]: obj1[key], indicator: 'notDiff' };
+      return buildDiff(key, obj1[key], 'notDiff');
+      // { [key]: obj1[key], indicator: 'notDiff' };
     } if (isObject(obj1[key]) && isObject(obj2[key])) {
-      return { [key]: getDifferents(obj1[key], obj2[key]), indicator: 'notDiff' };
+      return buildDiff(key, getDifferents(obj1[key], obj2[key]), 'notDiff');
+      //{ [key]: getDifferents(obj1[key], obj2[key]), indicator: 'notDiff' };
     }
-    return [{ [key]: obj1[key], indicator: 'onlyFirst' }, { [key]: obj2[key], indicator: 'onlySecond' }];
+    return [buildDiff(key, obj1[key], 'onlyFirst'), buildDiff(key, obj2[key], 'onlySecond')];
+    // [{ [key]: obj1[key], indicator: 'onlyFirst' }, { [key]: obj2[key], indicator: 'onlySecond' }];
   });
+  //console.log(differents);
   return differents;
 };
+
+// console.log(buildDiff('ni', 1, 'first'));
+
 // key: { не ставится индикатор на такой вариант
 //   key:val,
 // }
