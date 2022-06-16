@@ -23,7 +23,7 @@ const render = (collection) => {
     // const bracketIndent = replacer.repeat(indentSize - 1 - spacesCount);
     const amountSpace = 4;
     const replaser = ' ';
-    const getSpace = (deep, spaces = 2) => replaser.repeat(deep * (amountSpace - spaces));
+    const getSpace = (deep, spaces = 2) => replaser.repeat((deep * amountSpace) - spaces);
 
     const lines = value.flatMap((obj) => {
       const { indicator } = obj;
