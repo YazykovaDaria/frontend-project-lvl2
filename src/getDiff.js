@@ -13,7 +13,6 @@ const buildDiff = (key, value, marker = 'none') => {
   }
   const result = Object.keys(value)
     .map((currentKey) => (buildDiff(currentKey, value[currentKey])));
-  //что с индикатором?
   return { [key]: result, indicator: marker };
 };
 
@@ -35,40 +34,3 @@ export const getDifferents = (obj1, obj2) => {
   });
   return differents;
 };
-
-// console.log(buildDiff('ni', 1, 'first'));
-
-// key: { не ставится индикатор на такой вариант
-//   key:val,
-// }
-
-// const o1 = {
-//   key1: 'gj',
-//   key2: 3,
-//   key3: {
-//     nextK1: 2,
-//     nextK2: {
-//       has: {
-//         keg: 1,
-//         h: 2,
-//       },
-//     },
-//   },
-// };
-
-// const o2 = {
-//   key: 'gj',
-//   key2: 2,
-//   key3: {
-//     nextK1: 2,
-//     nextK3: {
-//       has: {
-//         keg: 'he',
-//       },
-//     },
-//   },
-// };
-// console.log(getDifferents(o1, o2));
-// getDifferents(o1, o2);
-// const m = _.merge(o1, o2);
-// console.log(_.sortBy(m));
