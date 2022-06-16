@@ -1,32 +1,35 @@
-name: Project 2
+# Name of workflow
+name: Node CI
 
-# Триггеры
+# Trigger the workflow on push or pull request
 on:
   - push
   - pull_request
 
-# Переменная окружения
 env:
   CI: true
 
 jobs:
   build:
 
-    # Тип ОС для запуска
+    # The type of machine to run the job on
     runs-on: ubuntu-latest
 
     strategy:
-      # Версия ноды
+      # Node versions list
       matrix:
-        node-version: [16.x]
+        node-version: [14.x]
 
-        steps:
-        #Клонирование репа
+    steps:
+        # Check-out repository under GitHub workspace
+        # https://github.com/actions/checkout
       - uses: actions/checkout@v2
-        # Имя шага
-      - name: Use Project 2 ${{ matrix.node-version }}
-        # Конфиг ноды
+        # Step's name
+      - name: Use Node.js ${{ matrix.node-version }}
+        # Configures the node version used on GitHub-hosted runners
+        # https://github.com/actions/setup-node
         uses: actions/setup-node@v2
+        # The Node.js version to configure
         with:
           node-version: ${{ matrix.node-version }}
           cache: 'npm'
