@@ -14,8 +14,7 @@ const buildDiff = (key, value, marker = 'none') => {
   const result = Object.keys(value)
     .map((currentKey) => (buildDiff(currentKey, value[currentKey])));
   //что с индикатором?
-  const n = { [key]: result, indicator: marker };
-  return n;
+  return { [key]: result, indicator: marker };
 };
 
 export const getDifferents = (obj1, obj2) => {
@@ -25,21 +24,15 @@ export const getDifferents = (obj1, obj2) => {
   const differents = sortKeys.flatMap((key) => {
     if (_.has(obj1, key) && !_.has(obj2, key)) {
       return buildDiff(key, obj1[key], 'onlyFirst');
-      // { [key]: obj1[key], indicator: 'onlyFirst' };
     } if (!_.has(obj1, key) && _.has(obj2, key)) {
       return buildDiff(key, obj2[key], 'onlySecond');
-      // { [key]: obj2[key], indicator: 'onlySecond' };
     } if (obj1[key] === obj2[key]) {
       return buildDiff(key, obj1[key], 'notDiff');
-      // { [key]: obj1[key], indicator: 'notDiff' };
     } if (isObject(obj1[key]) && isObject(obj2[key])) {
       return buildDiff(key, getDifferents(obj1[key], obj2[key]), 'notDiff');
-      //{ [key]: getDifferents(obj1[key], obj2[key]), indicator: 'notDiff' };
     }
     return [buildDiff(key, obj1[key], 'onlyFirst'), buildDiff(key, obj2[key], 'onlySecond')];
-    // [{ [key]: obj1[key], indicator: 'onlyFirst' }, { [key]: obj2[key], indicator: 'onlySecond' }];
   });
-  //console.log(differents);
   return differents;
 };
 
