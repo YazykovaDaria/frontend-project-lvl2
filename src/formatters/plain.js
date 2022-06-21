@@ -2,17 +2,22 @@ import getDifferents from '../getDiff.js';
 
 const isComplexValue = (value) => typeof value === 'object' && value !== null;
 
-const buildStr = (indicator, key, value) => {
-    const valueStr = isComplexValue(value) ? '[complex value]' : value;
+const valueStr = (val) => {
+    if (isComplexValue(val)) {
+        return '[complex value]';
+    }
+    return typeof val === 'boolean' || val === 'null' ? val : `'${val}'`;
+};
+
+const buildStr = (indicator, name, value1) => {
+    // console.log(indicator);
     switch (indicator) {
         case 'onlyFirst':
-            return `Property ${key} was removed`;
+            return `Property '${name}' was updated. From ${valueStr(value1)} to ***`;
         case 'onlySecond':
-            return `Property ${key} was added with value: ${valueStr}`;
+            return `Property '${name}' was added with value: ${valueStr(value1)}`;
         case 'notDiff':
-            return '*';
-        case 'none':
-            return '** ';
+            return `Property '${name}' was removed`;
         default:
             return '==';
         // throw new Error('incorrect indicator');
@@ -20,16 +25,32 @@ const buildStr = (indicator, key, value) => {
 };
 
 const plain = (collection) => {
-    const filter = collection.filter((obj) => obj.indicator !== 'none');
-    const result = filter.map((obj) => {
-        const keys = Object.keys(obj);
-        const [key, indicator] = keys;
-        // console.log(keys);
-        const str = buildStr(obj[indicator], key, obj[key]);
-        return str;
-    });
-    //console.log(result);
-    return result.join('\n');
+    const item = (coll, name = '') => {
+        //console.log(coll);
+        const filter = coll.filter((obj) => obj.indicator !== 'none');
+        const result = filter.flatMap((obj) => {
+            const { indicator } = obj;
+            // console.log(indicator);
+            const keys = Object.keys(obj)
+                .map((key) => {
+                    const nextName = `${name}${key}`;
+                    if (key !== 'indicator') {
+                        if (Array.isArray(obj[key])) {
+                            // && indicator === 'notDiff'
+                            return item(obj[key], `${nextName}.`);
+                        }
+                        // console.log(obj[indicator]);
+                        const str = buildStr(indicator, nextName, obj[key]);
+                        return str;
+                    }
+                    return [];
+                });
+            return keys;
+        });
+        //console.log(result.join('\n'));
+        return result.join('\n');
+    };
+    return item(collection);
 };
 
 const a = {
@@ -37,8 +58,8 @@ const a = {
         nextK: 'hi',
         next2: {
             n: 3,
-        }
-    }
+        },
+    },
 };
 
 const b = {
@@ -51,7 +72,9 @@ const b = {
     },
 };
 
-const y = getDifferents(a, b);
-console.log(JSON.stringify(y));
-//plain(y);
-//console.log(plain(y));
+// const y = getDifferents(a, b);
+// console.log(JSON.stringify(y));
+// plain(y);
+// console.log(plain(y));
+
+export default plain;
