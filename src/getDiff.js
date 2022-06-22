@@ -1,6 +1,6 @@
 import _ from 'lodash';
 
-export const isObject = (value) => {
+const isObject = (value) => {
   if (typeof value === 'object' && !Array.isArray(value) && value !== null) {
     return true;
   }
@@ -16,21 +16,31 @@ const buildDiff = (key, value, marker = 'none') => {
   return { [key]: result, indicator: marker };
 };
 
-export const getDifferents = (obj1, obj2) => {
+const getDifferents = (obj1, obj2) => {
   const allKeys = _.union(Object.keys(obj1).concat(Object.keys(obj2)));
   const sortKeys = allKeys.sort();
 
   const differents = sortKeys.flatMap((key) => {
     if (_.has(obj1, key) && !_.has(obj2, key)) {
-      return buildDiff(key, obj1[key], 'onlyFirst');
+      return { key, indicator: 'remove', value: obj1[key] };
+      //buildDiff(key, obj1[key], 'onlyFirst');
     } if (!_.has(obj1, key) && _.has(obj2, key)) {
-      return buildDiff(key, obj2[key], 'onlySecond');
-    } if (obj1[key] === obj2[key]) {
-      return buildDiff(key, obj1[key], 'notDiff');
-    } if (isObject(obj1[key]) && isObject(obj2[key])) {
-      return buildDiff(key, getDifferents(obj1[key], obj2[key]), 'notDiff');
+      return { key, indicator: 'add', value: obj2[key] }
+      //buildDiff(key, obj2[key], 'onlySecond');
     }
-    return [buildDiff(key, obj1[key], 'onlyFirst'), buildDiff(key, obj2[key], 'onlySecond')];
+    // if (obj1[key] === obj2[key]) {
+    //   return buildDiff(key, obj1[key], 'notDiff');
+    // }
+    if (isObject(obj1[key]) && isObject(obj2[key])) {
+      return { key, children: getDifferents(obj1[key], obj2[key]), indicator: 'inside' };
+      //buildDiff(key, getDifferents(obj1[key], obj2[key]), 'notDiff');
+    } if (obj1[key] !== obj2[key]) {
+      return { key, indicator: 'update', firstVal: obj1[key], secondVal: obj2[key] };
+      //[buildDiff(key, obj1[key], 'onlyFirst'), buildDiff(key, obj2[key], 'onlySecond')];
+    }
+    return { key, value: obj1[key], indicator: 'identic' };
   });
   return differents;
 };
+
+export default getDifferents;
