@@ -15,16 +15,17 @@ const getDifferents = (obj1, obj2) => {
     if (_.has(obj1, key) && !_.has(obj2, key)) {
       return { key, state: 'deleted', value: obj1[key] };
     } if (!_.has(obj1, key) && _.has(obj2, key)) {
-      return { key, state: 'added', value: obj2[key] }
+      return { key, state: 'added', value: obj2[key] };
     }
     if (isObject(obj1[key]) && isObject(obj2[key])) {
       return { key, children: getDifferents(obj1[key], obj2[key]), state: 'interior' };
     } if (obj1[key] !== obj2[key]) {
-      return { key, state: 'update', firstVal: obj1[key], secondVal: obj2[key] };
+      return {
+        key, state: 'update', firstVal: obj1[key], secondVal: obj2[key],
+      };
     }
     return { key, value: obj1[key], state: 'identic' };
   });
-  console.log(differents);
   return differents;
 };
 
