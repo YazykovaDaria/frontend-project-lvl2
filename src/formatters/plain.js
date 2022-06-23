@@ -9,53 +9,44 @@ const valueStr = (val) => {
     return typeof val === 'boolean' || val === 'null' ? val : `'${val}'`;
 };
 
-const buildStr = (indicator, name, value1) => {
-    // console.log(indicator);
-    switch (indicator) {
-        case 'onlyFirst':
-            return `Property '${name}' was updated. From ${valueStr(value1)} to ***`;
-        case 'onlySecond':
-            return `Property '${name}' was added with value: ${valueStr(value1)}`;
-        case 'notDiff':
+const buildStr = (diff, name) => {
+    const { state } = diff;
+    switch (state) {
+        case 'update':
+            return `Property '${name}' was updated. From ${valueStr(diff.firstVal)} to ${valueStr(diff.secondVal)}`;
+        case 'added':
+            return `Property '${name}' was added with value: ${valueStr(diff.value)}`;
+        case 'deleted':
             return `Property '${name}' was removed`;
         default:
-            return '==';
-        // throw new Error('incorrect indicator');
+            throw new Error('incorrect indicator');
     }
 };
 
 const plain = (collection) => {
     const item = (coll, name = '') => {
-        //console.log(coll);
-        const filter = coll.filter((obj) => obj.indicator !== 'none');
-        const result = filter.flatMap((obj) => {
-            const { indicator } = obj;
-            // console.log(indicator);
-            const keys = Object.keys(obj)
-                .map((key) => {
-                    const nextName = `${name}${key}`;
-                    if (key !== 'indicator') {
-                        if (Array.isArray(obj[key])) {
-                            // && indicator === 'notDiff'
-                            return item(obj[key], `${nextName}.`);
-                        }
-                        // console.log(obj[indicator]);
-                        const str = buildStr(indicator, nextName, obj[key]);
-                        return str;
-                    }
-                    return [];
-                });
-            return keys;
-        });
-        //console.log(result.join('\n'));
+        // console.log(coll);
+        const result = coll.filter((obj) => obj.state !== 'identic')
+            .flatMap((obj) => {
+                //console.log(obj);
+                const { state } = obj;
+                const nextName = `${name}${obj.key}`;
+                if (state === 'interior') {
+                    return item(obj.children, `${nextName}.`);
+                }
+                return buildStr(obj, nextName);
+            });
+        // console.log(result.join('\n'));
         return result.join('\n');
     };
     return item(collection);
 };
 
+//const nextName = `${name}${key}`;
+//return item(obj[key], `${nextName}.`);
 const a = {
     key: {
-        nextK: 'hi',
+        next1: 'h',
         next2: {
             n: 3,
         },
@@ -72,9 +63,9 @@ const b = {
     },
 };
 
-// const y = getDifferents(a, b);
+//const y = getDifferents(a, b);
 // console.log(JSON.stringify(y));
 // plain(y);
-// console.log(plain(y));
+//console.log(plain(y));
 
 export default plain;

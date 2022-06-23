@@ -22,23 +22,23 @@ const getDifferents = (obj1, obj2) => {
 
   const differents = sortKeys.flatMap((key) => {
     if (_.has(obj1, key) && !_.has(obj2, key)) {
-      return { key, indicator: 'remove', value: obj1[key] };
+      return { key, state: 'deleted', value: obj1[key] };
       //buildDiff(key, obj1[key], 'onlyFirst');
     } if (!_.has(obj1, key) && _.has(obj2, key)) {
-      return { key, indicator: 'add', value: obj2[key] }
+      return { key, state: 'added', value: obj2[key] }
       //buildDiff(key, obj2[key], 'onlySecond');
     }
     // if (obj1[key] === obj2[key]) {
     //   return buildDiff(key, obj1[key], 'notDiff');
     // }
     if (isObject(obj1[key]) && isObject(obj2[key])) {
-      return { key, children: getDifferents(obj1[key], obj2[key]), indicator: 'inside' };
+      return { key, children: getDifferents(obj1[key], obj2[key]), state: 'interior' };
       //buildDiff(key, getDifferents(obj1[key], obj2[key]), 'notDiff');
     } if (obj1[key] !== obj2[key]) {
-      return { key, indicator: 'update', firstVal: obj1[key], secondVal: obj2[key] };
+      return { key, state: 'update', firstVal: obj1[key], secondVal: obj2[key] };
       //[buildDiff(key, obj1[key], 'onlyFirst'), buildDiff(key, obj2[key], 'onlySecond')];
     }
-    return { key, value: obj1[key], indicator: 'identic' };
+    return { key, value: obj1[key], state: 'identic' };
   });
   return differents;
 };
