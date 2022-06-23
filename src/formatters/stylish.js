@@ -1,3 +1,5 @@
+import getDifferents from '../getDiff.js';
+
 const getIndicator = (indicator) => {
   switch (indicator) {
     case 'onlyFirst':
@@ -13,17 +15,12 @@ const getIndicator = (indicator) => {
   }
 };
 
+//переделать под новую логику дифа!
 const render = (collection) => {
   const item = (value, depth) => {
-    // const replacer = ' ';
-    // const spacesCount = 4;
-    // const space = 2;
-    // const indentSize = depth * spacesCount;
-    // const currentIndent = replacer.repeat(indentSize - space);
-    // const bracketIndent = replacer.repeat(indentSize - 1 - spacesCount);
     const amountSpace = 4;
     const replaser = ' ';
-    const getSpace = (deep, spaces = 2) => replaser.repeat((deep * amountSpace) - spaces);
+    const getSpace = (deep, spaces = 2) => replaser.repeat((deep * amountSpace - spaces));
 
     const lines = value.flatMap((obj) => {
       const { indicator } = obj;
@@ -47,3 +44,25 @@ const render = (collection) => {
 };
 
 export default render;
+
+const a = {
+  key: {
+    next1: 'hi',
+    n: 3,
+    // next2: {
+    //     n: 3,
+    // },
+  },
+};
+
+const b = {
+  key: {
+    next1: 'h',
+    // next2: {
+    //     n: 2,
+    // },
+    // next3: 'net',
+  },
+};
+
+const y = getDifferents(a, b);
