@@ -7,17 +7,28 @@ const isObject = (value) => {
   return false;
 };
 
+const buildDiff = (key, value, state = 'identic') => {
+  if (!isObject(value)) {
+    return {key, value, state}
+  }
+  const result = Object.keys(value)
+  .map((currentKey) => (buildDiff(currentKey, value[currentKey])));
+return { [key]: result, indicator: marker }
+};
+
+// состояние для вложенных ключей в 1-x двух блоках не прописываются!
 const getDifferents = (obj1, obj2) => {
   const allKeys = _.union(Object.keys(obj1).concat(Object.keys(obj2)));
   const sortKeys = allKeys.sort();
 
   const differents = sortKeys.flatMap((key) => {
     if (_.has(obj1, key) && !_.has(obj2, key)) {
-      return { key, state: 'deleted', value: obj1[key] };
+      return buildDiff(key, obj1[key], 'deleted');
+      //{ key, state: 'deleted', value: obj1[key] };
     } if (!_.has(obj1, key) && _.has(obj2, key)) {
       return { key, state: 'added', value: obj2[key] };
     }
-    if (isObject(obj1[key]) && isObject(obj2[key])) {
+    if (isObject(obj1[key]) || isObject(obj2[key])) {
       return { key, children: getDifferents(obj1[key], obj2[key]), state: 'interior' };
     } if (obj1[key] !== obj2[key]) {
       return {
