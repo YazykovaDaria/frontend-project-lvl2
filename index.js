@@ -1,4 +1,3 @@
-// eslint-disable-next-line import/no-unresolved
-import genDiff from './src.js';
+import genDiff from './src/index.js';
 
 export default genDiff;
