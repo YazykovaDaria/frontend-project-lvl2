@@ -1,7 +1,6 @@
 import path, { dirname } from 'path';
 import { fileURLToPath } from 'url';
 import { readFileSync } from 'fs';
-import { test, expect } from '@jest/globals';
 import genDiff from '../src/index.js';
 
 const __filename = fileURLToPath(import.meta.url);
@@ -9,14 +8,19 @@ const __dirname = dirname(__filename);
 
 const pathToTestFile = (fileName) => path.join(__dirname, '__fixtures__', fileName);
 
-const testFileNames = ['first.yaml', 'second.yaml'];
+const getCorrectAnswers = (arr) => {
+  return arr.map((filename) => readFileSync(pathToTestFile(filename), 'utf-8'))
+};
 
-const testCorrectAnswerFileName = ['plain'];
+const correctAnswers = getCorrectAnswers(['stylish.txt', 'plain.txt', 'json.txt']);
 
-test('gendiff', () => {
-  const file1 = pathToTestFile(testFileNames[0]);
-  const file2 = pathToTestFile(testFileNames[1]);
-  const correctAnswer = readFileSync(pathToTestFile(testCorrectAnswerFileName[0]), 'utf-8');
-
-  expect(genDiff(file1, file2)).toEqual(correctAnswer);
+test.each(['yaml', 'json'])('diff', (ext) => {
+  const path1 = pathToTestFile(`first.${ext}`);
+  const path2 = pathToTestFile(`second.${ext}`);
+  const testStylish = genDiff(path1, path2, 'stylish');
+  expect(testStylish).toBe(correctAnswers[0]);
+  const testPlain = genDiff(path1, path2, 'plain');
+  expect(testPlain).toBe(correctAnswers[1]);
+  const testJson = genDiff(path1, path2, 'json');
+  expect(testJson).toBe(correctAnswers[2]);
 });
