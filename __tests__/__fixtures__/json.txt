@@ -1,0 +1,114 @@
+{
+  "key": "common",
+  "children": [
+    {
+      "key": "follow",
+      "state": "added",
+      "value": false
+    },
+    {
+      "key": "setting1",
+      "value": "Value 1",
+      "state": "identic"
+    },
+    {
+      "key": "setting2",
+      "state": "deleted",
+      "value": 200
+    },
+    {
+      "key": "setting3",
+      "state": "update",
+      "firstVal": true,
+      "secondVal": null
+    },
+    {
+      "key": "setting4",
+      "state": "added",
+      "value": "blah blah"
+    },
+    {
+      "key": "setting5",
+      "state": "added",
+      "value": {
+        "key5": "value5"
+      }
+    },
+    {
+      "key": "setting6",
+      "children": [
+        {
+          "key": "doge",
+          "children": [
+            {
+              "key": "wow",
+              "state": "update",
+              "firstVal": "",
+              "secondVal": "so much"
+            }
+          ],
+          "state": "interior"
+        },
+        {
+          "key": "key",
+          "value": "value",
+          "state": "identic"
+        },
+        {
+          "key": "ops",
+          "state": "added",
+          "value": "vops"
+        }
+      ],
+      "state": "interior"
+    }
+  ],
+  "state": "interior"
+}
+{
+  "key": "group1",
+  "children": [
+    {
+      "key": "baz",
+      "state": "update",
+      "firstVal": "bas",
+      "secondVal": "bars"
+    },
+    {
+      "key": "foo",
+      "value": "bar",
+      "state": "identic"
+    },
+    {
+      "key": "nest",
+      "state": "update",
+      "firstVal": {
+        "key": "value"
+      },
+      "secondVal": "str"
+    }
+  ],
+  "state": "interior"
+}
+{
+  "key": "group2",
+  "state": "deleted",
+  "value": {
+    "abc": 12345,
+    "deep": {
+      "id": 45
+    }
+  }
+}
+{
+  "key": "group3",
+  "state": "added",
+  "value": {
+    "deep": {
+      "id": {
+        "number": 45
+      }
+    },
+    "fee": 100500
+  }
+}
