@@ -1,38 +1,43 @@
-import getDifferents from '../getDiff.js';
+import _ from 'lodash';
 
 const indicators = {
   deleted: '- ',
   added: '+ ',
   update: '  ',
   identic: '  ',
-  interior: '',
+  interior: '  ',
 };
 
-const isObject = (value) => {
-  if (typeof value === 'object' && !Array.isArray(value) && value !== null) {
-    return true;
-  }
-  return false;
-};
+// const getTab = (currentDepth, multiplier = 4) => {
+//   const space = ' ';
+//   const result = space.repeat(currentDepth * multiplier - 2);
+//   return result;
+// };
+// const tab = getTab(depth, 4);
+// const tabClose = getTab(depth - 1, 4);
 
-const amountSpace = 4;
+
+const getSpace = (depth, amountSpace = 4) => {
 const replaser = ' ';
-const getSpace = (deep, spaces = 2) => replaser.repeat(deep * amountSpace);
+  const d = depth * amountSpace - 2;
+  console.log(depth);
+  const result = replaser.repeat(d)
+  return result
+}
+
+const valueStr = (value, deep) => {
+  if (!_.isObject(value)) {
+    return value;
+  }
+  const result = Object.entries(value)
+    .map(([key, val]) => `${getSpace(deep + 1)}  ${key}: ${valueStr(val, deep + 1)}`)
+    .join('\n');
+  return `{\n${result}\n${getSpace(deep)}  }`;
+};
 // ёбаные пробелы!!!
 
 const stylish = (collection) => {
   const item = (coll, depth) => {
-    //console.log(coll);
-
-    const valueStr = (value) => {
-      if (!isObject(value)) {
-        return value;
-      }
-      const result = Object.entries(value)
-        .map(([key, val]) => `${getSpace(depth)}  ${key}: ${valueStr(val, depth + 1)}`)
-        .join('\n');
-      return `{\n${result}\n${getSpace(depth - 1)}  }`;
-    };
 
     const lines = coll.flatMap((obj) => {
       const { state } = obj;
@@ -41,45 +46,17 @@ const stylish = (collection) => {
       if (state === 'interior') {
         return `${startStr}${item(obj.children, depth + 1)}`;
       } if (state === 'update') {
-        return [`${getSpace(depth)}${indicators.deleted}${obj.key}: ${valueStr(obj.firstVal)}`, `${getSpace(depth)}${indicators.added}${obj.key}: ${valueStr(obj.secondVal)}`];
+        return [`${getSpace(depth)}${indicators.deleted}${obj.key}: ${valueStr(obj.firstVal, depth)}`, `${getSpace(depth)}${indicators.added}${obj.key}: ${valueStr(obj.secondVal, depth)}`];
       }
-      return `${startStr}${valueStr(obj.value)}`;
+      return `${startStr}${valueStr(obj.value, depth)}`;
     });
-    const result = ['{', ...lines, `${getSpace(depth - 1)}}`].join('\n');
+    //const y = depth === 1 ? 2 : 4;
+    const result = ['{', ...lines, `${getSpace(depth)}}`].join('\n');
+    //depth > 1 ? depth - 1 : depth
     return result;
   };
-  return item(collection, 1);
+  const result = `{\n${item(collection, 1)}\n}`
+  return result;
 };
 
 export default stylish;
-
-// const a = {
-//   key1: {
-//     next1: 'hi',
-//     // n: 3,
-//     next11: {
-//       n: 3,
-//     },
-//   },
-// };
-
-// const b = {
-//   key2: {
-//     next2: 'h',
-//     next22: {
-//       n: 2,
-//     },
-//     next3: 'net',
-//   },
-// };
-// const m = [
-//   { key: 'follow', state: 'added', value: false },
-//   { key: 'setting1', value: 'Value 1', state: 'identic' },
-//   { key: 'setting2', state: 'deleted', value: 200 },
-//   { key: 'setting3', state: 'update', firstVal: true, secondVal: null },
-//   { key: 'setting4', state: 'added', value: 'blah blah' },
-//   { key: 'setting5', state: 'added', value: { key5: 'value5' } },
-// ]
-// const y = getDifferents(a, b);
-//console.log(stylish(m));
-// console.log(y);
