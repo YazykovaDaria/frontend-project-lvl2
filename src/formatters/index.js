@@ -8,8 +8,8 @@ const render = (collection, format) => {
       return stylish(collection);
     case 'plain':
       return plain(collection);
-      case 'json':
-        return json(collection);
+    case 'json':
+      return json(collection);
     default:
       throw new Error('incorrect format');
   }

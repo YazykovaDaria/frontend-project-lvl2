@@ -1,3 +1,4 @@
+import { test, expect } from '@jest/globals';
 import path, { dirname } from 'path';
 import { fileURLToPath } from 'url';
 import { readFileSync } from 'fs';
@@ -8,9 +9,7 @@ const __dirname = dirname(__filename);
 
 const pathToTestFile = (fileName) => path.join(__dirname, '__fixtures__', fileName);
 
-const getCorrectAnswers = (arr) => {
-  return arr.map((filename) => readFileSync(pathToTestFile(filename), 'utf-8'))
-};
+const getCorrectAnswers = (arr) => arr.map((filename) => readFileSync(pathToTestFile(filename), 'utf-8'));
 
 const correctAnswers = getCorrectAnswers(['stylish.txt', 'plain.txt', 'json.txt']);
 

@@ -9,10 +9,10 @@ const indicators = {
 };
 
 const getSpace = (depth, amountSpace = 4) => {
-const replaser = ' ';
-const result = replaser.repeat(depth * amountSpace - 2)
-return result;
-}
+  const replaser = ' ';
+  const result = replaser.repeat(depth * amountSpace - 2);
+  return result;
+};
 
 const valueStr = (value, depth) => {
   if (!_.isObject(value)) {
@@ -38,7 +38,7 @@ const stylish = (collection) => {
     });
     return lines.join('\n');
   };
-  const result = `{\n${item(collection, 1)}\n}`
+  const result = `{\n${item(collection, 1)}\n}`;
   return result;
 };
 
