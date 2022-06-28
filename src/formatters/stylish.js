@@ -32,7 +32,6 @@ const stylish = (collection) => {
       if (state === 'interior') {
         return `${startStr}{\n${item(obj.children, depth + 1)}\n${getSpace(depth)}  }`;
       } if (state === 'update') {
-        // чё как решить с этим пробелом?
         return [`${getSpace(depth)}${indicators.deleted}${obj.key}: ${valueStr(obj.firstVal, depth)}`, `${getSpace(depth)}${indicators.added}${obj.key}: ${valueStr(obj.secondVal, depth)}`];
       }
       return `${startStr}${valueStr(obj.value, depth)}`;
