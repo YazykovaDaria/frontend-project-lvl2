@@ -1,6 +1,6 @@
 import _ from 'lodash';
 
-const isObject = (value) => {
+export const isObject = (value) => {
   if (typeof value === 'object' && !Array.isArray(value) && value !== null) {
     return true;
   }
