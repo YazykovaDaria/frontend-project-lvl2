@@ -4,7 +4,7 @@ const valueStr = (val) => {
   if (isComplexValue(val)) {
     return '[complex value]';
   }
-  return typeof val === 'boolean' || val === null ? val : `'${val}'`;
+  return typeof val !== 'string' || val === null ? val : `'${val}'`;
 };
 
 const plain = (collection) => {
