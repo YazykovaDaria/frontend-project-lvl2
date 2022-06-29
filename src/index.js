@@ -6,7 +6,7 @@ import render from './formatters/index.js';
 
 const readFile = (fileName) => readFileSync(path.resolve(process.cwd(), fileName), 'utf-8');
 
-const genDiff = (filepath1, filepath2, format) => {
+const genDiff = (filepath1, filepath2, format = 'stylish') => {
   const contentFile1 = readFile(filepath1);
   const contentFile2 = readFile(filepath2);
   const obj1 = parser(path.extname(filepath1), contentFile1);
