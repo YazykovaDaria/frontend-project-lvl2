@@ -6,7 +6,7 @@ const parser = (extname, file) => {
   } if (extname === 'yaml' || extname === 'yml') {
     return yaml.load(file);
   }
-  throw new Error(`incorrect extname ${extname}`);
+  throw new Error(`incorrect extname "${extname}"`);
 };
 
 export default parser;

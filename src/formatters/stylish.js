@@ -29,12 +29,14 @@ const stylish = (collection) => {
     const lines = coll.flatMap((obj) => {
       const { state } = obj;
       const startStr = `${getSpace(depth)}${indicators[state]}${obj.key}: `;
-      if (state === 'interior') {
-        return `${startStr}{\n${item(obj.children, depth + 1)}\n${getSpace(depth)}  }`;
-      } if (state === 'update') {
-        return [`${getSpace(depth)}${indicators.deleted}${obj.key}: ${valueStr(obj.firstVal, depth)}`, `${getSpace(depth)}${indicators.added}${obj.key}: ${valueStr(obj.secondVal, depth)}`];
+      switch (state) {
+        case 'interior':
+          return `${startStr}{\n${item(obj.children, depth + 1)}\n${getSpace(depth)}  }`;
+        case 'update':
+          return [`${getSpace(depth)}${indicators.deleted}${obj.key}: ${valueStr(obj.firstVal, depth)}`, `${getSpace(depth)}${indicators.added}${obj.key}: ${valueStr(obj.secondVal, depth)}`];
+        default:
+          return `${startStr}${valueStr(obj.value, depth)}`;
       }
-      return `${startStr}${valueStr(obj.value, depth)}`;
     });
     return lines.join('\n');
   };

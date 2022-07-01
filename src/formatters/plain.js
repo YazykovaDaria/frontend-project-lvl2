@@ -13,10 +13,9 @@ const plain = (collection) => {
       .flatMap((obj) => {
         const { state } = obj;
         const nextName = `${name}${obj.key}`;
-        if (state === 'interior') {
-          return item(obj.children, `${nextName}.`);
-        }
         switch (state) {
+          case 'interior':
+            return item(obj.children, `${nextName}.`);
           case 'update':
             return `Property '${nextName}' was updated. From ${valueStr(obj.firstVal)} to ${valueStr(obj.secondVal)}`;
           case 'added':
