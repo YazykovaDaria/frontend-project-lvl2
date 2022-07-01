@@ -9,8 +9,8 @@ const readFile = (fileName) => readFileSync(path.resolve(process.cwd(), fileName
 const genDiff = (filepath1, filepath2, format = 'stylish') => {
   const contentFile1 = readFile(filepath1);
   const contentFile2 = readFile(filepath2);
-  const obj1 = parser(path.extname(filepath1), contentFile1);
-  const obj2 = parser(path.extname(filepath2), contentFile2);
+  const obj1 = parser(path.extname(filepath1).slice(1), contentFile1);
+  const obj2 = parser(path.extname(filepath2).slice(1), contentFile2);
   const differents = getDifferents(obj1, obj2);
   const diff = render(differents, format);
   return diff;

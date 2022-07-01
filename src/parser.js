@@ -1,12 +1,12 @@
 import yaml from 'js-yaml';
 
 const parser = (extname, file) => {
-  if (extname === '.json') {
+  if (extname === 'json') {
     return JSON.parse(file);
-  } if (extname === '.yaml' || extname === '.yml') {
+  } if (extname === 'yaml' || extname === 'yml') {
     return yaml.load(file);
   }
-  throw new Error('incorrect extname');
+  throw new Error(`incorrect extname ${extname}`);
 };
 
 export default parser;
