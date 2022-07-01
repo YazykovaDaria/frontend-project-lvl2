@@ -8,8 +8,8 @@ export const isObject = (value) => {
 };
 
 const getDifferents = (obj1, obj2) => {
-  const allKeys = _.union(Object.keys(obj1).concat(Object.keys(obj2)));
-  const sortKeys = allKeys.sort();
+  const allKeys = _.union(Object.keys(obj1), Object.keys(obj2));
+  const sortKeys = _.sortBy(allKeys);
 
   const differents = sortKeys.flatMap((key) => {
     if (_.has(obj1, key) && !_.has(obj2, key)) {
