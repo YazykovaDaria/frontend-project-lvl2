@@ -4,7 +4,8 @@ const parser = (extname, file) => {
   switch (extname) {
     case 'json':
       return JSON.parse(file);
-    case 'yaml' || 'yml':
+    case 'yaml':
+    case 'yml':
       return yaml.load(file);
     default:
       throw new Error(`incorrect extname "${extname}"`);
